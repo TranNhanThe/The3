@@ -48,17 +48,20 @@ const Food = mongoose.model('Food', foodSchema);
 // Middleware
 app.use(express.json());
 //Routes
-app.get('/', async (req, res) => {
-    try {
-        // Lấy danh sách các khoá học từ MongoDB
-        const courses = await Course.find({}, '_id name'); // Chỉ lấy _id và name
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.json(courses); // Trả về danh sách khoá học
-    } catch (error) {
-        console.error('Error fetching courses:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
+// const todoRoutes = require('./routes/todoRoutes');
+
+// app.get('/', async (req, res) => {
+//     try {
+//         // Lấy danh sách các khoá học từ MongoDB
+//         const courses = await Course.find({}, '_id name'); // Chỉ lấy _id và name
+//         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+//         res.json(courses); // Trả về danh sách khoá học
+//     } catch (error) {
+//         console.error('Error fetching courses:', error);
+//         res.status(500).json({ message: 'Internal server error' });
+//     }
+// });
+// app.use('/todo', todoRoutes);
 app.get('/todo', async (req, res) => {
     try {
         // Lấy danh sách các todo từ MongoDB
@@ -108,17 +111,7 @@ app.delete('/todo/delete', async (req, res) => {
         res.status(500).json({ message: 'Failed to delete todos' });
     }
 });
-app.get('/food', async (req, res) => {
-    try {
-        // Lấy danh sách các todo từ MongoDB
-        const foods = await Food.find({}, '_id name calories fat carbs protein'); // Chỉ lấy _id và name
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.json(foods); // Trả về danh sách khoá học
-    } catch (error) {
-        console.error('Error fetching courses:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
+
 // Khởi chạy server và kết nối MongoDB
 app.listen(PORT, async () => {
     await connect();

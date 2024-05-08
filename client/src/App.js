@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import EnhancedTodo from './components/EnhancedTodo';
+import PopupForm from './components/PopUp';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
     // </div>
     <div>
       <EnhancedTodo/>
+      {/* <PopupForm/> */}
     </div>
   );
 }

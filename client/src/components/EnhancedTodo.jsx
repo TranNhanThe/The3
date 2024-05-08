@@ -22,15 +22,20 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
-
 import React, { useState, useEffect, useRef } from 'react';
-import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
-
-
 import TextField from '@mui/material/TextField';
-
 import Button from '@mui/material/Button';
+import ChecklistIcon from '@mui/icons-material/Checklist';
+// import logo from '../../public/logo192.png';
+import logo from '../logo.svg';
+import loading from '../loading.png';
+import fishy from '../fishy.jpg';
+import spin from '../spin.mp3';
 
+import PopupForm from './PopUp';
+
+
+//=============================================================================
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -48,10 +53,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -85,16 +86,15 @@ const headCells = [
   }
 ];
 
+//======================================================================================
+
 function EnhancedTableHead(props) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-
   return (
-
-
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
@@ -107,7 +107,9 @@ function EnhancedTableHead(props) {
               'aria-label': 'select all desserts',
             }}
           />
+
         </TableCell>
+
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -145,30 +147,31 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
-  
+//=================================================================================
 
+function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
   const handleDelete = async () => {
     try {
-        const response = await axios.delete('http://localhost:5000/todo/delete', {
-            data: { ids: selected },
-        });
+      const response = await axios.delete('http://localhost:5000/todo/delete', {
+        data: { ids: selected },
+      });
 
-        if (response.status === 200) {
-            console.log('Todos deleted successfully');
-            // Không cần gửi yêu cầu GET sau khi xóa
-            // Cập nhật UI với danh sách todo đã được xóa
-            const updatedResponse = await axios.get('http://localhost:5000/todo');
-            const updatedTodos = updatedResponse.data;
-            setRows(updatedTodos);
-            setSelected([]);
-        } else {
-            console.error('Failed to delete todos');
-        }
+      if (response.status === 200) {
+        console.log('Todos deleted successfully');
+        // Không cần gửi yêu cầu GET sau khi xóa
+        // Cập nhật UI với danh sách todo đã được xóa
+        const updatedResponse = await axios.get('http://localhost:5000/todo');
+        const updatedTodos = updatedResponse.data;
+        setRows(updatedTodos);
+        setSelected([]);
+      } else {
+        console.error('Failed to delete todos');
+      }
     } catch (error) {
-        console.error('Error deleting todos:', error);
+      console.error('Error deleting todos:', error);
     }
-};
+  };
+
   return (
     <Toolbar
       sx={{
@@ -201,7 +204,6 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
 
         </Typography>
       )}
-
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton onClick={handleDelete}>
@@ -223,6 +225,9 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
+
+//======================================[DEFAULT FUNCTION]===================================================
+
 export default function EnhancedTodo() {
   const [rows, setRows] = useState([]);
 
@@ -232,14 +237,14 @@ export default function EnhancedTodo() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const [showRow, setShowRow] = React.useState({});
   const inputRef = useRef(null);
+
+  //handleSubmit
   const handleSubmit = async (event) => {
     event.preventDefault();
     const todoName = event.target.todo_name.value;
     const status = 'pending';
-
-
     try {
       const response = await fetch('http://localhost:5000/todo', {
         method: 'POST',
@@ -264,12 +269,6 @@ export default function EnhancedTodo() {
     } catch (error) {
       console.error('Error adding todo:', error);
     }
-  };
-
-  const [isEditFormVisible, setIsEditFormVisible] = useState(false);
-
-  const handleEditClick = () => {
-    setIsEditFormVisible(true);
   };
 
 
@@ -346,26 +345,37 @@ export default function EnhancedTodo() {
     [order, orderBy, page, rowsPerPage, rows],
   );
 
+  const handleShowRow = (rowId) => {
+    setShowRow(prevState => ({
+      ...prevState,
+      [rowId]: !prevState[rowId] // Đảo ngược trạng thái hiển thị của hàng có id là rowId
+    }));
+  };
 
-
+//------------View---------------
   return (
-
     <div>
       <br />
+
       <form onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img src={logo} className="App-logo" alt="logo" />
+        <img src={fishy} className="App-logo" alt="logo" />
+        <audio src={spin} controls></audio>
+        <img src={loading} className="App-logo" alt="logo" />
         <TextField
           inputRef={inputRef}
           name='todo_name'
           id="outlined-basic"
-          label="Outlined"
+          label="Thêm tasks"
           variant="outlined"
           style={{ width: '80%', height: '50px' }}
         />
-
-        <Button type="submit" variant="contained" color="primary" style={{ height: '50px' }}>
-          Submit
+        <Button type="submit" variant="contained" color="primary" style={{ height: '55px', marginTop: '5px' }}>
+          Thêm
         </Button>
+
       </form>
+      <br />
       <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
           <EnhancedTableToolbar
@@ -394,9 +404,10 @@ export default function EnhancedTodo() {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
+
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row._id)}
+                      // onClick={(event) => handleClick(event, row._id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -407,22 +418,37 @@ export default function EnhancedTodo() {
                       <TableCell padding="checkbox">
                         <Checkbox
                           color="primary"
+                          onClick={(event) => handleClick(event, row._id)}
                           checked={isItemSelected}
                           inputProps={{
                             'aria-labelledby': labelId,
                           }}
                         />
+
                       </TableCell>
+
                       <TableCell
                         component="th"
                         id={labelId}
+                        onClick={(event) => { handleClick(event, row._id) }}
                         scope="row"
                         padding="none"
                       >
                         {row.todo_name}
                       </TableCell>
                       <TableCell align="right">{row.status}</TableCell>
-                      <TableCell align="right" onClick={handleEditClick}><ModeOutlinedIcon /></TableCell>
+                      <TableCell align="right">
+                        <PopupForm 
+                        id={(row._id).toString()}
+                        name={(row.todo_name).toString()}
+                        status={(row.status).toString()}
+                      />
+                      </TableCell>
+                    
+                      {/* {showRow[row._id] && <PopupForm 
+                        id={(row._id).toString()}
+                      />} */}
+                      
 
                     </TableRow>
                   );
