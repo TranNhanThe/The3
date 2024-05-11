@@ -1,16 +1,9 @@
 const mongoose = require('mongoose');
 
 const listSchema = new mongoose.Schema({
-    todo_name: {
-        type: String,
-        required: true
-    },
-    status: {
-        type: String,
-        default: 'pending'
-    }
+    todo_name: String,
+    status: String
+    // Thêm các trường khác nếu cần
 });
 
-const List = mongoose.model('List', listSchema);
-
-module.exports = List;
+module.exports = mongoose.model('List', listSchema);
