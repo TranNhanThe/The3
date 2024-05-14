@@ -244,7 +244,7 @@ export default function EnhancedTodo() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const todoName = event.target.todo_name.value;
-    const status = 'pending';
+    const status = 'Pending';
     try {
       const response = await fetch('http://localhost:5000/todo', {
         method: 'POST',
@@ -351,6 +351,9 @@ export default function EnhancedTodo() {
       [rowId]: !prevState[rowId] // Đảo ngược trạng thái hiển thị của hàng có id là rowId
     }));
   };
+  const handleUpdateRows = (updatedTodos) => {
+    setRows(updatedTodos);
+  };
 
 //------------View---------------
   return (
@@ -442,6 +445,7 @@ export default function EnhancedTodo() {
                         id={(row._id).toString()}
                         name={(row.todo_name).toString()}
                         status={(row.status).toString()}
+                        onSubmit={handleUpdateRows}
                       />
                       </TableCell>
                     

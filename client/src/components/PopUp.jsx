@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { Button, Box, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, FormControl, MenuItem, InputLabel } from '@mui/material';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 
-const PopupForm = ({ id, name, status }) => {
+import axios from 'axios';
+
+const PopupForm = ({ id, name, status, onSubmit }) => {
   const [open, setOpen] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [editedStatus, setEditedStatus] = useState(status);
+
+  // console.log('edited Status:' + editedStatus)
+  // console.log('edited Status:' + editedName)
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -18,23 +24,64 @@ const PopupForm = ({ id, name, status }) => {
   const handleNameChange = (event) => {
     setEditedName(event.target.value);
   };
+  
 
-  const handleStatusChange = (event) => {
+  const handleChange = (event) => {
     setEditedStatus(event.target.value);
   };
 
+  const handleSubmit = async () => {
+    const response = await fetch('http://localhost:5000/todo/id', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id, newName: editedName, newStatus: editedStatus }),
+    });
+
+    if (response.ok) {
+      const updatedResponse = await axios.get('http://localhost:5000/todo');
+      const updatedTodos = updatedResponse.data;
+      onSubmit(updatedTodos);
+    } else {
+
+    }
+
+    handleClose();
+   
+  };
+
+ 
+
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}><ModeOutlinedIcon/></Button>
+      <Button variant="outlined" onClick={handleClickOpen}><ModeOutlinedIcon /></Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Form Title</DialogTitle>
-        <DialogContent >
-          <TextField label="Task" value={editedName} onChange={handleNameChange} variant="outlined" fullWidth />
-          {/* <TextField label="Status" value={editedStatus} onChange={handleStatusChange} variant="outlined" fullWidth /> */}
+        <DialogContent>
+          <Box margin={2}>
+            <TextField label="Task" value={editedName} onChange={handleNameChange} variant="outlined" fullWidth />
+          </Box>
+          <Box margin={2}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">StatusTo</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={editedStatus}
+                onChange={handleChange}
+              >
+                <MenuItem value={editedStatus}>{editedStatus}</MenuItem>
+                {editedStatus !== 'Pending' && <MenuItem value={'Pending'}>Pending</MenuItem>}
+                {editedStatus !== 'Doing' && <MenuItem value={'Doing'}>Doing</MenuItem>}
+                {editedStatus !== 'Done' && <MenuItem value={'Done'}>Done</MenuItem>}
+              </Select>
+            </FormControl>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Submit</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>
     </div>

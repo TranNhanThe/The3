@@ -43,8 +43,24 @@ const deleteLists = async (req, res) => {
     }
 };
 
+const updateTodoName = async (req, res) => {
+    try {
+        const { id, newName, newStatus } = req.body;
+        const updatedList = await List.findOneAndUpdate({ _id: id }, { todo_name: newName, status: newStatus }, { new: true });
+        if (!updatedList) {
+            return res.status(404).json({ message: 'Todo not found' });
+        }
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.status(200).json(updatedList);
+    } catch (error) {
+        console.error('Error updating todo name:', error);
+        res.status(500).json({ message: 'Failed to update todo name' });
+    }
+};
+
 module.exports = {
     getAllLists,
     createList,
-    deleteLists
+    deleteLists,
+    updateTodoName
 };
