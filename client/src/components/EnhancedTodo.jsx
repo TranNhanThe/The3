@@ -26,13 +26,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ChecklistIcon from '@mui/icons-material/Checklist';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Select, FormControl, MenuItem, InputLabel } from '@mui/material';
+
 // import logo from '../../public/logo192.png';
 import logo from '../logo.svg';
 import loading from '../loading.png';
 import fishy from '../fishy.jpg';
 import spin from '../spin.mp3';
 
-import PopupForm from './PopUp';
+import EditPopUp from './EditPopUp';
+import AddPopUp from './AddPopUp';
+
 
 
 //=============================================================================
@@ -172,6 +176,19 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
     }
   };
 
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleUpdateRows = (updatedTodos) => {
+    setRows(updatedTodos);
+  };
+
   return (
     <Toolbar
       sx={{
@@ -201,9 +218,9 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
           component="div"
         >
           Todolist
-
         </Typography>
       )}
+      
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton onClick={handleDelete}>
@@ -217,6 +234,11 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
           </IconButton>
         </Tooltip>
       )}
+      <Tooltip title="Add Todo">
+          <IconButton>
+            <AddPopUp  onSubmit={handleUpdateRows}/>
+          </IconButton>
+        </Tooltip>
     </Toolbar>
   );
 }
@@ -441,7 +463,7 @@ export default function EnhancedTodo() {
                       </TableCell>
                       <TableCell align="right">{row.status}</TableCell>
                       <TableCell align="right">
-                        <PopupForm 
+                        <EditPopUp
                         id={(row._id).toString()}
                         name={(row.todo_name).toString()}
                         status={(row.status).toString()}

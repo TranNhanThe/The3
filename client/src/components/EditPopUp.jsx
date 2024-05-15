@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Box, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, FormControl, MenuItem, InputLabel } from '@mui/material';
+import { Button, Box, Dialog, Snackbar, DialogActions, DialogContent, DialogTitle, TextField, Select, FormControl, MenuItem, InputLabel } from '@mui/material';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
+
 
 import axios from 'axios';
 
-const PopupForm = ({ id, name, status, onSubmit }) => {
+const EditPopUp = ({ id, name, status, onSubmit }) => {
   const [open, setOpen] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [editedStatus, setEditedStatus] = useState(status);
@@ -12,6 +13,7 @@ const PopupForm = ({ id, name, status, onSubmit }) => {
   // console.log('edited Status:' + editedStatus)
   // console.log('edited Status:' + editedName)
 
+  const [success, setSuccess] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -42,6 +44,7 @@ const PopupForm = ({ id, name, status, onSubmit }) => {
     if (response.ok) {
       const updatedResponse = await axios.get('http://localhost:5000/todo');
       const updatedTodos = updatedResponse.data;
+      setSuccess('Sửa thành công');
       onSubmit(updatedTodos);
     } else {
 
@@ -51,13 +54,11 @@ const PopupForm = ({ id, name, status, onSubmit }) => {
    
   };
 
- 
-
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen}><ModeOutlinedIcon /></Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Form Title</DialogTitle>
+        <DialogTitle>Edit Task</DialogTitle>
         <DialogContent>
           <Box margin={2}>
             <TextField label="Task" value={editedName} onChange={handleNameChange} variant="outlined" fullWidth />
@@ -84,8 +85,14 @@ const PopupForm = ({ id, name, status, onSubmit }) => {
           <Button onClick={handleSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={!!success}
+        autoHideDuration={3000}
+        message={success}
+        onClose={() => setSuccess('')}
+      />
     </div>
   );
 };
 
-export default PopupForm;
+export default EditPopUp;
