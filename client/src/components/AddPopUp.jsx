@@ -99,10 +99,6 @@ const AddPopUp = ({ onSubmit }) => {
       }
     }
   };
-
-  
-
-
   return (
     <div>
       <AddBoxIcon onClick={handleClickOpen} />
@@ -123,7 +119,7 @@ const AddPopUp = ({ onSubmit }) => {
           <Box margin={2}>
             <FormControl fullWidth error={!!statusError}>
               <InputLabel id="demo-simple-select-label">Status</InputLabel>
-              <Select
+              <Select 
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={status}

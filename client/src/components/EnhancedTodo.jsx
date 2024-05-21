@@ -220,7 +220,7 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
           Todolist
         </Typography>
       )}
-      
+
       {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton onClick={handleDelete}>
@@ -235,10 +235,10 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
         </Tooltip>
       )}
       <Tooltip title="Add Todo">
-          <IconButton>
-            <AddPopUp  onSubmit={handleUpdateRows}/>
-          </IconButton>
-        </Tooltip>
+        <IconButton>
+          <AddPopUp onSubmit={handleUpdateRows} />
+        </IconButton>
+      </Tooltip>
     </Toolbar>
   );
 }
@@ -252,7 +252,7 @@ EnhancedTableToolbar.propTypes = {
 
 export default function EnhancedTodo() {
   const [rows, setRows] = useState([]);
-
+  const [cloneRows, setClonerows] = useState([]);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
@@ -260,39 +260,10 @@ export default function EnhancedTodo() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [showRow, setShowRow] = React.useState({});
+  const [status, setStatus] = useState();
   const inputRef = useRef(null);
 
   //handleSubmit
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const todoName = event.target.todo_name.value;
-    const status = 'Pending';
-    try {
-      const response = await fetch('http://localhost:5000/todo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ todo_name: todoName, status }),
-      });
-
-      if (response.ok) {
-        console.log('Todo added successfully');
-        // Fetch the updated list of todos
-        const updatedResponse = await fetch('http://localhost:5000/todo');
-        const updatedTodos = await updatedResponse.json();
-        // Update the UI with the updated list of todos
-        inputRef.current.value = '';
-        inputRef.current.focus();
-        setRows(updatedTodos);
-      } else {
-        console.error('Failed to add todo');
-      }
-    } catch (error) {
-      console.error('Error adding todo:', error);
-    }
-  };
-
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -352,6 +323,7 @@ export default function EnhancedTodo() {
     axios.get('http://localhost:5000/todo')
       .then(response => {
         setRows(response.data);
+        setClonerows(response.data);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -377,29 +349,75 @@ export default function EnhancedTodo() {
     setRows(updatedTodos);
   };
 
-//------------View---------------
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const trimmedSearchValue = searchValue.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    let filteredTodos = cloneRows;
+  
+    if (selectedValue) {
+      const normalizedStatus = selectedValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      filteredTodos = filteredTodos.filter(row => row.status.toLowerCase() === normalizedStatus.toLowerCase());
+    }
+    console.log('status spoted:' + filteredTodos.status)
+  
+    filteredTodos = filteredTodos.filter(row => {
+      const normalizedTodoName = row.todo_name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      return normalizedTodoName.toLowerCase().includes(trimmedSearchValue.toLowerCase());
+    });
+    console.log(filteredTodos)
+  
+    setRows(filteredTodos);
+  }
+
+  
+  //------------View---------------
   return (
     <div>
       <br />
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <img src={logo} className="App-logo" alt="logo" />
-        <img src={fishy} className="App-logo" alt="logo" />
-        <audio src={spin} controls></audio>
-        <img src={loading} className="App-logo" alt="logo" />
+      <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <TextField
           inputRef={inputRef}
-          name='todo_name'
+          name="todo_name"
           id="outlined-basic"
-          label="Thêm tasks"
+          label="Tìm Task"
           variant="outlined"
-          style={{ width: '80%', height: '50px' }}
+          style={{ width: '50%', height: '50px' }}
+          onChange={(e) => setSearchValue(e.target.value)}
         />
-        <Button type="submit" variant="contained" color="primary" style={{ height: '55px', marginTop: '5px' }}>
-          Thêm
-        </Button>
 
+        
+        <FormControl fullWidth style={{ width: '30%',marginTop: '5px' }}>
+          <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={selectedValue}
+            label="Age"
+            onChange={handleChange}
+          >
+            <MenuItem value={''}>Tất cả</MenuItem>
+            <MenuItem value={'Pending'}>Pending</MenuItem>
+            <MenuItem value={'Doing'}>Doing</MenuItem>
+            <MenuItem value={'Done'}>Done</MenuItem>
+          </Select>
+        </FormControl>
+
+
+
+        <Button type="submit" variant="contained" color="primary" style={{ height: '55px', marginTop: '5px' }}>
+          Tìm Kiếm
+        </Button>
       </form>
+
       <br />
       <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
@@ -464,17 +482,17 @@ export default function EnhancedTodo() {
                       <TableCell align="right">{row.status}</TableCell>
                       <TableCell align="right">
                         <EditPopUp
-                        id={(row._id).toString()}
-                        name={(row.todo_name).toString()}
-                        status={(row.status).toString()}
-                        onSubmit={handleUpdateRows}
-                      />
+                          id={(row._id).toString()}
+                          name={(row.todo_name).toString()}
+                          status={(row.status).toString()}
+                          onSubmit={handleUpdateRows}
+                        />
                       </TableCell>
-                    
+
                       {/* {showRow[row._id] && <PopupForm 
                         id={(row._id).toString()}
                       />} */}
-                      
+
 
                     </TableRow>
                   );
