@@ -11,15 +11,29 @@ app.use((req, res, next) => {
 });
 
 // Kết nối MongoDB
+// async function connect() {
+//     try {
+//         await mongoose.connect('mongodb://127.0.0.1/f8_education_dev', {
+//             useNewUrlParser: true,
+//             useUnifiedTopology: true
+//         });
+//         console.log('Connect successfully!!!');
+//     } catch (error) {
+//         console.log('Connect Fail!');
+//     }
+// }
+
+// Kết nối atlas
 async function connect() {
     try {
-        await mongoose.connect('mongodb://127.0.0.1/f8_education_dev', {
+        await mongoose.connect('mongodb+srv://nhanthe133:0977343132As@cluster0.uw1j0wh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        console.log('Connect successfully!!!');
+
+        console.log('Connected successfully to MongoDB Atlas!');
     } catch (error) {
-        console.log('Connect Fail!');
+        console.error('Failed to connect to MongoDB Atlas:', error);
     }
 }
 

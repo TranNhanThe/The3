@@ -25,7 +25,9 @@ import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+
 import ChecklistIcon from '@mui/icons-material/Checklist';
+import SearchIcon from '@mui/icons-material/Search';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Select, FormControl, MenuItem, InputLabel } from '@mui/material';
 
 // import logo from '../../public/logo192.png';
@@ -414,7 +416,7 @@ export default function EnhancedTodo() {
 
 
         <Button type="submit" variant="contained" color="primary" style={{ height: '55px', marginTop: '5px' }}>
-          Tìm Kiếm
+        <SearchIcon/>
         </Button>
       </form>
 
