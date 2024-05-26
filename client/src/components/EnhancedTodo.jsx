@@ -322,7 +322,9 @@ export default function EnhancedTodo() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   useEffect(() => {
-    axios.get('http://localhost:5000/todo')
+    // axios.get('http://localhost:5000/todo')
+    axios.get('https://the3.onrender.com/todo')
+
       .then(response => {
         setRows(response.data);
         setClonerows(response.data);
