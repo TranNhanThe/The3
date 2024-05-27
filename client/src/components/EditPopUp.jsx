@@ -33,7 +33,7 @@ const EditPopUp = ({ id, name, status, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    const response = await fetch('http://localhost:5000/todo/id', {
+    const response = await fetch('https://the3.onrender.com/todo/id', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ const EditPopUp = ({ id, name, status, onSubmit }) => {
     });
 
     if (response.ok) {
-      const updatedResponse = await axios.get('http://localhost:5000/todo');
+      const updatedResponse = await axios.get('https://the3.onrender.com/todo');
       const updatedTodos = updatedResponse.data;
       setSuccess('Sửa thành công');
       onSubmit(updatedTodos);

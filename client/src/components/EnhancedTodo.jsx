@@ -158,7 +158,7 @@ EnhancedTableHead.propTypes = {
 function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
   const handleDelete = async () => {
     try {
-      const response = await axios.delete('http://localhost:5000/todo/delete', {
+      const response = await axios.delete('https://the3.onrender.com/todo/delete', {
         data: { ids: selected },
       });
 
@@ -166,7 +166,7 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
         console.log('Todos deleted successfully');
         // Không cần gửi yêu cầu GET sau khi xóa
         // Cập nhật UI với danh sách todo đã được xóa
-        const updatedResponse = await axios.get('http://localhost:5000/todo');
+        const updatedResponse = await axios.get('https://the3.onrender.com/todo');
         const updatedTodos = updatedResponse.data;
         setRows(updatedTodos);
         setSelected([]);
@@ -219,7 +219,7 @@ function EnhancedTableToolbar({ numSelected, selected, setSelected, setRows }) {
           id="tableTitle"
           component="div"
         >
-          Todolist
+          Todolisto
         </Typography>
       )}
 
