@@ -4,7 +4,7 @@ const getAllLists = async (req, res) => {
     try {
         const lists = await List.find({}, '_id todo_name status');
         // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-20475861z-trannhanthes-projects.vercel.app');
+        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-dkk6jehxs-trannhanthes-projects.vercel.app');
         res.json(lists);
     } catch (error) {
         console.error('Error fetching courses:', error);
@@ -22,7 +22,7 @@ const createList = async (req, res) => {
         });
         const savedList = await newList.save();
         // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-20475861z-trannhanthes-projects.vercel.app');
+        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-dkk6jehxs-trannhanthes-projects.vercel.app');
         res.status(201).json(savedList);
     } catch (error) {
         console.error('Error adding todo:', error);
@@ -39,7 +39,7 @@ const deleteLists = async (req, res) => {
         }
         await List.deleteMany({ _id: { $in: todoIds } });
         // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-20475861z-trannhanthes-projects.vercel.app');
+        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-dkk6jehxs-trannhanthes-projects.vercel.app');
 
         res.status(200).json({ message: 'Todos deleted successfully' });
     } catch (error) {
@@ -56,7 +56,7 @@ const updateTodoName = async (req, res) => {
             return res.status(404).json({ message: 'Todo not found' });
         }
         // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-20475861z-trannhanthes-projects.vercel.app');
+        res.setHeader('Access-Control-Allow-Origin', 'https://todoclient-dkk6jehxs-trannhanthes-projects.vercel.app');
 
         res.status(200).json(updatedList);
     } catch (error) {

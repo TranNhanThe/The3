@@ -73,7 +73,7 @@ const AddPopUp = ({ onSubmit }) => {
     event.preventDefault();
     if (validate()) {
       try {
-        const response = await fetch('http://localhost:5000/todo', {
+        const response = await fetch('https://the3.onrender.com/todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const AddPopUp = ({ onSubmit }) => {
         if (response.ok) {
           console.log('Todo added successfully');
           // Fetch the updated list of todos
-          const updatedResponse = await fetch('http://localhost:5000/todo');
+          const updatedResponse = await fetch('https://the3.onrender.com/todo');
           const updatedTodos = await updatedResponse.json();
           // Update the UI with the updated list of todos
           onSubmit(updatedTodos);
